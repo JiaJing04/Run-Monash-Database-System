@@ -1,0 +1,3894 @@
+SQL> --========================== START RUN =====================================---
+SQL> -- Running rm-schema-insert.sql
+SQL> set echo off
+SQL> ------------- Task 1 Create Tables -----------------------------------------
+SQL> @T1-rm-schema.sql
+SQL> /*****PLEASE ENTER YOUR DETAILS BELOW*****/
+SQL> --T1-rm-schema.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> /* Comments for your marker:
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>*/
+SQL> 
+SQL> /* drop table statements - do not remove*/
+SQL> 
+SQL> DROP TABLE competitor CASCADE CONSTRAINTS PURGE;
+
+Table COMPETITOR dropped.
+
+SQL> 
+SQL> DROP TABLE entry CASCADE CONSTRAINTS PURGE;
+
+Table ENTRY dropped.
+
+SQL> 
+SQL> DROP TABLE team CASCADE CONSTRAINTS PURGE;
+
+Table TEAM dropped.
+
+SQL> 
+SQL> /* end of drop table statements*/
+SQL> 
+SQL> -- Task 1 Add Create table statements for the Missing TABLES below.
+SQL> -- Ensure all column comments, and constraints (other than FK's)are included.
+SQL> -- FK constraints are to be added at the end of this script
+SQL> 
+SQL> -- COMPETITOR
+SQL> 
+SQL> CREATE TABLE competitor (
+  2      comp_no         NUMBER(5) NOT NULL,
+  3      comp_fname      VARCHAR2(30),
+  4      comp_lname      VARCHAR2(30),
+  5      comp_gender     CHAR(1) NOT NULL,
+  6      comp_dob        DATE NOT NULL,
+  7      comp_email      VARCHAR2(50) NOT NULL,
+  8      comp_unistatus  CHAR(1) NOT NULL,
+  9      comp_phone      CHAR(10) NOT NULL
+ 10  );
+
+Table COMPETITOR created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_no IS
+  2      'Unique identifier for a competitor';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_fname IS
+  2      'Competitor''s first name';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_lname IS
+  2      'Competitor''s last name';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_gender IS
+  2      'Competitor''s gender (''M'' for male, ''F'' for female, or ''U'' for ''Undisclosed'')';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_dob IS
+  2      'Competitor''s date of birth';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_email IS
+  2      'Competitor''s email - unique for each competitor';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_unistatus IS
+  2      'Competitor is a university student or staff (''Y'' for Yes or ''N'' for No)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_phone IS
+  2      'Competitor''s phone number - unique for each competitor';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE competitor ADD CONSTRAINT competitor_pk PRIMARY KEY ( comp_no );
+
+Table COMPETITOR altered.
+
+SQL> 
+SQL> ALTER TABLE competitor ADD CONSTRAINT competitor_uq UNIQUE ( comp_email, comp_phone );
+
+Table COMPETITOR altered.
+
+SQL> 
+SQL> ALTER TABLE competitor ADD CONSTRAINT chk_gender check(comp_gender in ('M', 'F', 'U'));
+
+Table COMPETITOR altered.
+
+SQL> 
+SQL> ALTER TABLE competitor ADD CONSTRAINT chk_unistatus check(comp_unistatus in ('Y', 'N'));
+
+Table COMPETITOR altered.
+
+SQL> 
+SQL> --ENTRY
+SQL> 
+SQL> CREATE TABLE entry (
+  2      event_id            NUMBER(6) NOT NULL,
+  3      entry_no            NUMBER(5) NOT NULL,
+  4      entry_starttime     DATE,
+  5      entry_finishtime    DATE,
+  6      entry_elapsedtime   DATE,
+  7      comp_no             NUMBER(5) NOT NULL,
+  8      team_id             NUMBER(3),
+  9      char_id             NUMBER(3)
+ 10  );
+
+Table ENTRY created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.event_id IS
+  2      'Event id (part of composite primary key, references the event registered)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.entry_no IS
+  2      'Entry number (unique only within an event)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.entry_starttime IS
+  2      'The entrant''s start time (time only), stored using the format of hh24:mi:ss';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.entry_finishtime IS
+  2      'The entrant''s finish time (time only), stored using the format of hh24:mi:ss';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.entry_elapsedtime IS
+  2      'The time the entrant took to complete the event, stored using the format of hh24:mi:ss 
+  3      (e.g. 01:25:20 for 1 hour 25 minutes and 30 seconds)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.comp_no IS
+  2      'Entry''s engaged competitor number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.team_id IS
+  2      'Entry''s engaged team unique identifier';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry.char_id IS
+  2      'Entry''s nominated charity unique identifier';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE entry ADD CONSTRAINT entry_pk PRIMARY KEY ( event_id, entry_no );
+
+Table ENTRY altered.
+
+SQL> 
+SQL> --TEAM
+SQL> 
+SQL> CREATE TABLE team (
+  2      team_id       NUMBER(3) NOT NULL,
+  3      team_name     VARCHAR2(30) NOT NULL,
+  4      carn_date     DATE NOT NULL,
+  5      event_id      NUMBER(6) NOT NULL,
+  6      entry_no      NUMBER(5) NOT NULL
+  7  );
+
+Table TEAM created.
+
+SQL> 
+SQL> COMMENT ON COLUMN team.team_id IS
+  2      'Team identifier (unique)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN team.team_name IS
+  2      'Team name';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN team.carn_date IS
+  2      'Date of carnival which the team is created';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN team.event_id IS
+  2      'Event id created the team (team leader)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN team.entry_no IS
+  2      'Entry number created the team (team leader)';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE team ADD CONSTRAINT team_pk PRIMARY KEY ( team_id );
+
+Table TEAM altered.
+
+SQL> 
+SQL> ALTER TABLE team ADD CONSTRAINT team_uq UNIQUE ( team_name, carn_date );
+
+Table TEAM altered.
+
+SQL> 
+SQL> -- Add all missing FK Constraints below here
+SQL> 
+SQL> ALTER TABLE entry
+  2      ADD CONSTRAINT event_entry_fk FOREIGN KEY ( event_id )
+  3          REFERENCES event ( event_id );
+
+Table ENTRY altered.
+
+SQL> 
+SQL> ALTER TABLE entry
+  2      ADD CONSTRAINT competitor_entry_fk FOREIGN KEY ( comp_no )
+  3          REFERENCES competitor ( comp_no );
+
+Table ENTRY altered.
+
+SQL> 
+SQL> ALTER TABLE entry
+  2      ADD CONSTRAINT team_entry_fk FOREIGN KEY ( team_id )
+  3          REFERENCES team ( team_id );
+
+Table ENTRY altered.
+
+SQL> 
+SQL> ALTER TABLE entry
+  2      ADD CONSTRAINT charity_entry_fk FOREIGN KEY ( char_id )
+  3          REFERENCES charity ( char_id );
+
+Table ENTRY altered.
+
+SQL> 
+SQL> ALTER TABLE team
+  2      ADD CONSTRAINT carnival_team_fk FOREIGN KEY ( carn_date )
+  3          REFERENCES carnival ( carn_date );
+
+Table TEAM altered.
+
+SQL> 
+SQL> ALTER TABLE team
+  2      ADD CONSTRAINT entry_team_fk FOREIGN KEY ( event_id, entry_no )
+  3          REFERENCES entry ( event_id, entry_no );
+
+Table TEAM altered.
+
+SQL> 
+SQL> ------------- COMPETITOR ------------------------------------------
+SQL> describe COMPETITOR
+Name           Null?    Type         
+-------------- -------- ------------ 
+COMP_NO        NOT NULL NUMBER(5)    
+COMP_FNAME              VARCHAR2(30) 
+COMP_LNAME              VARCHAR2(30) 
+COMP_GENDER    NOT NULL CHAR(1)      
+COMP_DOB       NOT NULL DATE         
+COMP_EMAIL     NOT NULL VARCHAR2(50) 
+COMP_UNISTATUS NOT NULL CHAR(1)      
+COMP_PHONE     NOT NULL CHAR(10)     
+SQL> ------------- ENTRY --------------------------------------------
+SQL> describe ENTRY
+Name              Null?    Type      
+----------------- -------- --------- 
+EVENT_ID          NOT NULL NUMBER(6) 
+ENTRY_NO          NOT NULL NUMBER(5) 
+ENTRY_STARTTIME            DATE      
+ENTRY_FINISHTIME           DATE      
+ENTRY_ELAPSEDTIME          DATE      
+COMP_NO           NOT NULL NUMBER(5) 
+TEAM_ID                    NUMBER(3) 
+CHAR_ID                    NUMBER(3) 
+SQL> ------------- TEAM --------------------------------------------
+SQL> describe TEAM
+Name      Null?    Type         
+--------- -------- ------------ 
+TEAM_ID   NOT NULL NUMBER(3)    
+TEAM_NAME NOT NULL VARCHAR2(30) 
+CARN_DATE NOT NULL DATE         
+EVENT_ID  NOT NULL NUMBER(6)    
+ENTRY_NO  NOT NULL NUMBER(5)    
+SQL> 
+SQL> ------------- Task 2 Load Student Data  -------------------------------------
+SQL> @T2-rm-insert.sql
+SQL> /*****PLEASE ENTER YOUR DETAILS BELOW*****/
+SQL> --T2-rm-insert.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> /* Comments for your marker:
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>*/
+SQL> 
+SQL> -- Task 2 Load the COMPETITOR, ENTRY and TEAM tables with your own
+SQL> -- test data following the data requirements expressed in the brief
+SQL> 
+SQL> -- =======================================
+SQL> -- COMPETITOR
+SQL> -- =======================================
+SQL> 
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      1,
+ 12      'Jia Jing',
+ 13      'Hew',
+ 14      'F',
+ 15      TO_DATE('12/JUN/2004','DD/MON/YYYY'),
+ 16      'jiajing@gmail.com',
+ 17      'Y',
+ 18      '1234567890'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      2,
+ 12      'Yue Hua',
+ 13      'Chow',
+ 14      'F',
+ 15      TO_DATE('10/OCT/2004','DD/MON/YYYY'),
+ 16      'yuehua@gmail.com',
+ 17      'Y',
+ 18      '2234567890'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      3,
+ 12      'Ming Er',
+ 13      'Chok',
+ 14      'F',
+ 15      TO_DATE('01/JUL/2004','DD/MON/YYYY'),
+ 16      'minger@gmail.com',
+ 17      'Y',
+ 18      '3234567890'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      4,
+ 12      'Xiao Qian',
+ 13      'Boon',
+ 14      'F',
+ 15      TO_DATE('19/FEB/2004','DD/MON/YYYY'),
+ 16      'xiaoqian@gmail.com',
+ 17      'Y',
+ 18      '4234567890'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      5,
+ 12      'Jia Ming',
+ 13      'Wah',
+ 14      'M',
+ 15      TO_DATE('27/OCT/2004','DD/MON/YYYY'),
+ 16      'jiaming@gmail.com',
+ 17      'Y',
+ 18      '5234567890'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      6,
+ 12      'Celine',
+ 13      'Kang',
+ 14      'F',
+ 15      TO_DATE('13/JAN/2004','DD/MON/YYYY'),
+ 16      'celine@gmail.com',
+ 17      'N',
+ 18      '6234567891'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      7,
+ 12      'Jolin',
+ 13      'Cai',
+ 14      'F',
+ 15      TO_DATE('29/JUN/2004','DD/MON/YYYY'),
+ 16      'jolin@gmail.com',
+ 17      'N',
+ 18      '6234567892'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      8,
+ 12      'Queenie',
+ 13      'Teh',
+ 14      'F',
+ 15      TO_DATE('25/DEC/1990','DD/MON/YYYY'),
+ 16      'queenie@gmail.com',
+ 17      'N',
+ 18      '6234567893'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      9,
+ 12      'Max',
+ 13      'Chong',
+ 14      'M',
+ 15      TO_DATE('29/APR/1978','DD/MON/YYYY'),
+ 16      'max@gmail.com',
+ 17      'N',
+ 18      '6234567894'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      10,
+ 12      'Brandon',
+ 13      'Lee',
+ 14      'M',
+ 15      TO_DATE('03/APR/1990','DD/MON/YYYY'),
+ 16      'brandon@gmail.com',
+ 17      'N',
+ 18      '6234567895'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      11,
+ 12      'Sophia',
+ 13      'Ng',
+ 14      'F',
+ 15      TO_DATE('01/MAY/1998','DD/MON/YYYY'),
+ 16      'sophia@gmail.com',
+ 17      'Y',
+ 18      '9234567891'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      12,
+ 12      'Marcus',
+ 13      'Chan',
+ 14      'M',
+ 15      TO_DATE('02/MAY/1995','DD/MON/YYYY'),
+ 16      'marcuschan@gmail.com',
+ 17      'N',
+ 18      '9234567892'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      13,
+ 12      'Emily',
+ 13      'Tan',
+ 14      'F',
+ 15      TO_DATE('10/JUL/2001','DD/MON/YYYY'),
+ 16      'emilytan@gmail.com',
+ 17      'Y',
+ 18      '9234567893'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      14,
+ 12      'Daniel',
+ 13      'Lim',
+ 14      'M',
+ 15      TO_DATE('30/AUG/1993','DD/MON/YYYY'),
+ 16      'daniellim@gmail.com',
+ 17      'N',
+ 18      '9234567894'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      15,
+ 12      'Jasmine',
+ 13      'Yap',
+ 14      'F',
+ 15      TO_DATE('08/SEP/1999','DD/MON/YYYY'),
+ 16      'jasmineyap@gmail.com',
+ 17      'Y',
+ 18      '9234567895'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- =======================================
+SQL> -- ENTRY
+SQL> -- =======================================
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      1,
+ 13      TO_DATE('09:30:08', 'HH24:MI:SS'),
+ 14      TO_DATE('10:45:12', 'HH24:MI:SS'),
+ 15      TO_DATE('01:15:04', 'HH24:MI:SS'),
+ 16      1,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      2,
+ 13      TO_DATE('09:30:05', 'HH24:MI:SS'),
+ 14      TO_DATE('10:49:15', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:10', 'HH24:MI:SS'),
+ 16      2,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      3,
+ 13      TO_DATE('09:30:11', 'HH24:MI:SS'),
+ 14      TO_DATE('10:49:11', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:00', 'HH24:MI:SS'),
+ 16      3,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      4,
+ 13      TO_DATE('09:30:01', 'HH24:MI:SS'),
+ 14      TO_DATE('10:49:03', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:02', 'HH24:MI:SS'),
+ 16      4,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      5,
+ 13      TO_DATE('09:30:02', 'HH24:MI:SS'),
+ 14      TO_DATE('10:49:02', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:00', 'HH24:MI:SS'),
+ 16      5,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      6,
+ 13      NULL,
+ 14      NULL,
+ 15      NULL,
+ 16      6,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      1,
+ 12      7,
+ 13      NULL,
+ 14      NULL,
+ 15      NULL,
+ 16      7,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      2,
+ 12      1,
+ 13      TO_DATE('08:30:03', 'HH24:MI:SS'),
+ 14      TO_DATE('09:49:04', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:01', 'HH24:MI:SS'),
+ 16      8,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      2,
+ 12      2,
+ 13      NULL,
+ 14      NULL,
+ 15      NULL,
+ 16      9,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      2,
+ 12      3,
+ 13      TO_DATE('08:30:34', 'HH24:MI:SS'),
+ 14      TO_DATE('09:44:45', 'HH24:MI:SS'),
+ 15      TO_DATE('01:14:11', 'HH24:MI:SS'),
+ 16      10,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      3,
+ 12      1,
+ 13      TO_DATE('09:00:05', 'HH24:MI:SS'),
+ 14      TO_DATE('10:19:06', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:01', 'HH24:MI:SS'),
+ 16      1,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      3,
+ 12      2,
+ 13      TO_DATE('09:00:07', 'HH24:MI:SS'),
+ 14      TO_DATE('10:11:17', 'HH24:MI:SS'),
+ 15      TO_DATE('01:11:10', 'HH24:MI:SS'),
+ 16      2,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      3,
+ 12      3,
+ 13      TO_DATE('09:00:08', 'HH24:MI:SS'),
+ 14      TO_DATE('10:13:39', 'HH24:MI:SS'),
+ 15      TO_DATE('01:13:31', 'HH24:MI:SS'),
+ 16      3,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      3,
+ 12      4,
+ 13      TO_DATE('09:00:23', 'HH24:MI:SS'),
+ 14      TO_DATE('10:11:34', 'HH24:MI:SS'),
+ 15      TO_DATE('01:11:11', 'HH24:MI:SS'),
+ 16      4,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      3,
+ 12      5,
+ 13      TO_DATE('09:00:12', 'HH24:MI:SS'),
+ 14      TO_DATE('10:19:13', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:01', 'HH24:MI:SS'),
+ 16      5,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      4,
+ 12      1,
+ 13      TO_DATE('08:30:14', 'HH24:MI:SS'),
+ 14      TO_DATE('09:42:18', 'HH24:MI:SS'),
+ 15      TO_DATE('01:12:04', 'HH24:MI:SS'),
+ 16      8,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      4,
+ 12      2,
+ 13      TO_DATE('08:30:34', 'HH24:MI:SS'),
+ 14      TO_DATE('09:42:45', 'HH24:MI:SS'),
+ 15      TO_DATE('01:12:11', 'HH24:MI:SS'),
+ 16      9,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      4,
+ 12      3,
+ 13      NULL,
+ 14      NULL,
+ 15      NULL,
+ 16      10,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      5,
+ 12      1,
+ 13      TO_DATE('08:00:23', 'HH24:MI:SS'),
+ 14      TO_DATE('09:22:34', 'HH24:MI:SS'),
+ 15      TO_DATE('01:22:11', 'HH24:MI:SS'),
+ 16      12,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      5,
+ 12      2,
+ 13      TO_DATE('08:00:11', 'HH24:MI:SS'),
+ 14      TO_DATE('09:32:13', 'HH24:MI:SS'),
+ 15      TO_DATE('01:32:02', 'HH24:MI:SS'),
+ 16      13,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      6,
+ 12      1,
+ 13      TO_DATE('08:30:10', 'HH24:MI:SS'),
+ 14      TO_DATE('09:41:19', 'HH24:MI:SS'),
+ 15      TO_DATE('01:41:09', 'HH24:MI:SS'),
+ 16      1,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      6,
+ 12      2,
+ 13      TO_DATE('08:30:23', 'HH24:MI:SS'),
+ 14      TO_DATE('09:44:45', 'HH24:MI:SS'),
+ 15      TO_DATE('01:44:22', 'HH24:MI:SS'),
+ 16      2,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      6,
+ 12      3,
+ 13      TO_DATE('08:30:22', 'HH24:MI:SS'),
+ 14      TO_DATE('09:34:44', 'HH24:MI:SS'),
+ 15      TO_DATE('01:04:22', 'HH24:MI:SS'),
+ 16      3,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      6,
+ 12      4,
+ 13      TO_DATE('08:30:12', 'HH24:MI:SS'),
+ 14      TO_DATE('09:54:23', 'HH24:MI:SS'),
+ 15      TO_DATE('01:24:11', 'HH24:MI:SS'),
+ 16      4,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      6,
+ 12      5,
+ 13      TO_DATE('08:30:45', 'HH24:MI:SS'),
+ 14      TO_DATE('09:41:55', 'HH24:MI:SS'),
+ 15      TO_DATE('01:11:10', 'HH24:MI:SS'),
+ 16      5,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      7,
+ 12      1,
+ 13      TO_DATE('08:30:34', 'HH24:MI:SS'),
+ 14      TO_DATE('09:40:45', 'HH24:MI:SS'),
+ 15      TO_DATE('01:10:11', 'HH24:MI:SS'),
+ 16      10,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      7,
+ 12      2,
+ 13      TO_DATE('08:30:37', 'HH24:MI:SS'),
+ 14      TO_DATE('09:34:38', 'HH24:MI:SS'),
+ 15      TO_DATE('01:14:01', 'HH24:MI:SS'),
+ 16      11,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      10,
+ 12      1,
+ 13      TO_DATE('08:00:25', 'HH24:MI:SS'),
+ 14      TO_DATE('09:19:50', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:25', 'HH24:MI:SS'),
+ 16      6,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      10,
+ 12      2,
+ 13      TO_DATE('08:00:10', 'HH24:MI:SS'),
+ 14      TO_DATE('09:19:42', 'HH24:MI:SS'),
+ 15      TO_DATE('01:19:32', 'HH24:MI:SS'),
+ 16      7,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      10,
+ 12      3,
+ 13      TO_DATE('08:00:20', 'HH24:MI:SS'),
+ 14      TO_DATE('09:13:22', 'HH24:MI:SS'),
+ 15      TO_DATE('01:13:02', 'HH24:MI:SS'),
+ 16      8,
+ 17      NULL,
+ 18      1
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> -- =======================================
+SQL> -- TEAM
+SQL> -- =======================================
+SQL> 
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      1,
+  9      'TEAM A',
+ 10      TO_DATE('22/SEP/2024','DD/MON/YYYY'),
+ 11      1,
+ 12      1
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      2,
+  9      'TEAM B',
+ 10      TO_DATE('22/SEP/2024','DD/MON/YYYY'),
+ 11      1,
+ 12      2
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      3,
+  9      'Hello',
+ 10      TO_DATE('15/MAR/2025','DD/MON/YYYY'),
+ 11      10,
+ 12      3
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      4,
+  9      'TEAM D',
+ 10      TO_DATE('05/OCT/2024','DD/MON/YYYY'),
+ 11      3,
+ 12      2
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      5,
+  9      'Team A',
+ 10      TO_DATE('05/OCT/2024','DD/MON/YYYY'),
+ 11      3,
+ 12      1
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      6,
+  9      'We Can',
+ 10      TO_DATE('02/FEB/2025','DD/MON/YYYY'),
+ 11      6,
+ 12      1
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      7,
+  9      'We Believe',
+ 10      TO_DATE('02/FEB/2025','DD/MON/YYYY'),
+ 11      6,
+ 12      2
+ 13  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 1
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 2
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 1
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 1
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 4;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 2
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 5;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 2
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 6;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 2
+  4  WHERE 
+  5      event_id = 1 AND entry_no = 7;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 1
+  4  WHERE 
+  5      event_id = 2 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 1
+  4  WHERE 
+  5      event_id = 2 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 2
+  4  WHERE 
+  5      event_id = 2 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 3 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 4
+  4  WHERE 
+  5      event_id = 3 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 3 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 3 AND entry_no = 4;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 4
+  4  WHERE 
+  5      event_id = 3 AND entry_no = 5;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 4
+  4  WHERE 
+  5      event_id = 4 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 4 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 4 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 5 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 5
+  4  WHERE 
+  5      event_id = 5 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 6
+  4  WHERE 
+  5      event_id = 6 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 7
+  4  WHERE 
+  5      event_id = 6 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 6
+  4  WHERE 
+  5      event_id = 6 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 6
+  4  WHERE 
+  5      event_id = 6 AND entry_no = 4;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 7
+  4  WHERE 
+  5      event_id = 6 AND entry_no = 5;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 7
+  4  WHERE 
+  5      event_id = 7 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 7
+  4  WHERE 
+  5      event_id = 7 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 3
+  4  WHERE 
+  5      event_id = 10 AND entry_no = 1;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 3
+  4  WHERE 
+  5      event_id = 10 AND entry_no = 2;
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      team_id = 3
+  4  WHERE 
+  5      event_id = 10 AND entry_no = 3;
+
+1 row updated.
+
+SQL> 
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> ---------------------- Task 3 DML -----------------------------------------
+SQL> @T3-rm-dm.sql
+SQL> --****PLEASE ENTER YOUR DETAILS BELOW****
+SQL> --T3-rm-dm.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> /* Comments for your marker:
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>*/
+SQL> 
+SQL> --(a)
+SQL> 
+SQL> DROP SEQUENCE competitor_seq;
+
+Sequence COMPETITOR_SEQ dropped.
+
+SQL> 
+SQL> DROP SEQUENCE team_seq;
+
+Sequence TEAM_SEQ dropped.
+
+SQL> 
+SQL> CREATE SEQUENCE competitor_seq START WITH 100 INCREMENT BY 5;
+
+Sequence COMPETITOR_SEQ created.
+
+SQL> 
+SQL> CREATE SEQUENCE team_seq START WITH 100 INCREMENT BY 5;
+
+Sequence TEAM_SEQ created.
+
+SQL> 
+SQL> --(b)
+SQL> 
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      competitor_seq.NEXTVAL,
+ 12      'Keith',
+ 13      'Rose',
+ 14      'M',
+ 15      TO_DATE('23/SEP/2004','DD/MON/YYYY'),
+ 16      'keithrose@gmail.com',
+ 17      'Y',
+ 18      '0422141112'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      (
+ 12          SELECT e.event_id
+ 13          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 14          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 15      ),
+ 16      (
+ 17          SELECT nvl(max(e.entry_no), 0) + 1
+ 18          FROM entry e
+ 19          WHERE e.event_id = 
+ 20          (
+ 21              SELECT ev.event_id
+ 22              FROM event ev JOIN carnival c ON ev.carn_date = c.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 23              WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 24          )
+ 25      ), 
+ 26      NULL,
+ 27      NULL,
+ 28      NULL,
+ 29      competitor_seq.CURRVAL,
+ 30      NULL,
+ 31      (
+ 32          SELECT c.char_id
+ 33          FROM charity c
+ 34          WHERE upper(c.char_name) = upper('Salvation Army')
+ 35      )
+ 36  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO competitor (
+  2      comp_no,
+  3      comp_fname,
+  4      comp_lname,
+  5      comp_gender,
+  6      comp_dob,
+  7      comp_email,
+  8      comp_unistatus,
+  9      comp_phone
+ 10  ) VALUES ( 
+ 11      competitor_seq.NEXTVAL,
+ 12      'Jackson',
+ 13      'Bull',
+ 14      'M',
+ 15      TO_DATE('21/SEP/2004','DD/MON/YYYY'),
+ 16      'jacksonbull@gmail.com',
+ 17      'Y',
+ 18      '0422412524'
+ 19  );
+
+1 row inserted.
+
+SQL> 
+SQL> INSERT INTO entry (
+  2      event_id,
+  3      entry_no,
+  4      entry_starttime,
+  5      entry_finishtime,
+  6      entry_elapsedtime,
+  7      comp_no,
+  8      team_id,
+  9      char_id
+ 10  ) VALUES ( 
+ 11      (
+ 12          SELECT e.event_id
+ 13          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 14          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 15      ),
+ 16      (
+ 17          SELECT nvl(max(e.entry_no), 0) + 1
+ 18          FROM entry e
+ 19          WHERE e.event_id = 
+ 20          (
+ 21              SELECT ev.event_id
+ 22              FROM event ev JOIN carnival c ON ev.carn_date = c.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 23              WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 24          )
+ 25      ), 
+ 26      NULL,
+ 27      NULL,
+ 28      NULL,
+ 29      competitor_seq.CURRVAL,
+ 30      NULL,
+ 31      (
+ 32          SELECT c.char_id
+ 33          FROM charity c
+ 34          WHERE upper(c.char_name) = upper('RSPCA')
+ 35      )
+ 36  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO team (
+  2      team_id,
+  3      team_name,
+  4      carn_date,
+  5      event_id,
+  6      entry_no
+  7  ) VALUES ( 
+  8      team_seq.NEXTVAL,
+  9      'Super Runners',
+ 10      (
+ 11          SELECT c.carn_date
+ 12          FROM carnival c
+ 13          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025')
+ 14      ),
+ 15      (
+ 16          SELECT e.event_id
+ 17          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 18          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 19      ),
+ 20      (
+ 21          SELECT e.entry_no 
+ 22          FROM entry e JOIN competitor c ON e.comp_no = c.comp_no JOIN event ev ON e.event_id = ev.event_id JOIN carnival ca ON ev.carn_date = ca.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 23          WHERE upper(c.comp_fname) = upper('Keith') AND upper(c.comp_lname) = upper('Rose') AND c.comp_phone = '0422141112' AND upper(ca.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 24      )
+ 25  );
+
+1 row inserted.
+
+SQL> 
+SQL> 
+SQL> UPDATE entry
+  2  SET team_id = team_seq.CURRVAL 
+  3  WHERE 
+  4      event_id = 
+  5      (
+  6          SELECT e.event_id
+  7          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+  8          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+  9      )
+ 10      AND 
+ 11      entry_no = 
+ 12      (
+ 13          SELECT e.entry_no 
+ 14          FROM entry e JOIN competitor c ON e.comp_no = c.comp_no JOIN event ev ON e.event_id = ev.event_id JOIN carnival ca ON ev.carn_date = ca.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 15          WHERE upper(c.comp_fname) = upper('Keith') AND upper(c.comp_lname) = upper('Rose') AND c.comp_phone = '0422141112' AND upper(ca.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 16      );
+
+1 row updated.
+
+SQL> 
+SQL> UPDATE entry
+  2  SET team_id = team_seq.CURRVAL 
+  3  WHERE 
+  4      event_id = 
+  5      (
+  6          SELECT e.event_id
+  7          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+  8          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+  9      )
+ 10      AND 
+ 11      entry_no = 
+ 12      (
+ 13          SELECT e.entry_no 
+ 14          FROM entry e JOIN competitor c ON e.comp_no = c.comp_no JOIN event ev ON e.event_id = ev.event_id JOIN carnival ca ON ev.carn_date = ca.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 15          WHERE upper(c.comp_fname) = upper('Jackson') AND upper(c.comp_lname) = upper('Bull') AND c.comp_phone = '0422412524' AND upper(ca.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 16      );
+
+1 row updated.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --(c)
+SQL> 
+SQL> UPDATE entry
+  2  SET
+  3      char_id = 
+  4      (
+  5          SELECT c.char_id
+  6          FROM charity c
+  7          WHERE upper(c.char_name) = upper('Beyond Blue')
+  8      ),
+  9      event_id = 
+ 10      (
+ 11          SELECT e.event_id
+ 12          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 13          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('5 km run')
+ 14      ),
+ 15      entry_no = 
+ 16      (
+ 17          SELECT nvl(max(e.entry_no), 0) + 1
+ 18          FROM entry e
+ 19          WHERE event_id = 
+ 20          (
+ 21              SELECT e1.event_id
+ 22              FROM event e1 JOIN carnival c ON e1.carn_date = c.carn_date JOIN eventtype et ON e1.eventtype_code = et.eventtype_code
+ 23              WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('5 km run')
+ 24          )
+ 25      )
+ 26  WHERE 
+ 27      event_id = 
+ 28      (
+ 29          SELECT e.event_id
+ 30          FROM event e JOIN carnival c ON e.carn_date = c.carn_date JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 31          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 32      )
+ 33      AND 
+ 34      entry_no = 
+ 35      (
+ 36          SELECT e.entry_no 
+ 37          FROM entry e JOIN competitor c ON e.comp_no = c.comp_no JOIN event ev ON e.event_id = ev.event_id JOIN carnival ca ON ev.carn_date = ca.carn_date JOIN eventtype et ON ev.eventtype_code = et.eventtype_code
+ 38          WHERE upper(c.comp_fname) = upper('Jackson') AND upper(c.comp_lname) = upper('Bull') AND c.comp_phone = '0422412524' AND upper(ca.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025') AND upper(et.eventtype_desc) = upper('10 km run')
+ 39      );
+
+1 row updated.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --(d)
+SQL> 
+SQL> 
+SQL> UPDATE entry 
+  2  set team_id = NULL 
+  3  WHERE team_id in 
+  4  (
+  5      SELECT t.team_id 
+  6      FROM team t
+  7      WHERE upper(t.team_name) = upper('Super Runners') AND to_char(t.carn_date, 'DD/MON/YYYY') = 
+  8          (
+  9              SELECT to_char(c.carn_date, 'DD/MON/YYYY')
+ 10              FROM carnival c
+ 11              WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025')
+ 12          )
+ 13  );
+
+2 rows updated.
+
+SQL> 
+SQL> 
+SQL> DELETE FROM team
+  2  WHERE upper(team_name) = upper('Super Runners') AND to_char(carn_date, 'DD/MON/YYYY') = 
+  3      (            
+  4          SELECT to_char(c.carn_date, 'DD/MON/YYYY')
+  5          FROM carnival c
+  6          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025')
+  7      );
+
+1 row deleted.
+
+SQL> 
+SQL> 
+SQL> DELETE FROM entry
+  2  WHERE 
+  3      comp_no = (
+  4          SELECT c.comp_no
+  5          FROM competitor c
+  6          WHERE upper(c.comp_fname) = upper('Keith') AND upper(c.comp_lname) = upper('Rose') AND c.comp_phone = '0422141112'
+  7      )
+  8      AND event_id IN (
+  9          SELECT e.event_id
+ 10          FROM event e JOIN carnival c ON e.carn_date = c.carn_date
+ 11          WHERE upper(c.carn_name) = upper('RM WINTER SERIES CAULFIELD 2025')
+ 12    );
+
+1 row deleted.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> ------------- Task 4 ALTER ------------------------------------------------
+SQL> @T4-rm-mods.sql
+SQL> --****PLEASE ENTER YOUR DETAILS BELOW****
+SQL> --T4-rm-mods.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> /* Comments for your marker:
+SQL>
+SQL>assumming individual competitors in a carnival is entrants (based on the scenario in assignment brief)
+SQL>
+SQL>
+SQL>*/
+SQL> 
+SQL> --(a)
+SQL> 
+SQL> DESC competitor
+Name           Null?    Type         
+-------------- -------- ------------ 
+COMP_NO        NOT NULL NUMBER(5)    
+COMP_FNAME              VARCHAR2(30) 
+COMP_LNAME              VARCHAR2(30) 
+COMP_GENDER    NOT NULL CHAR(1)      
+COMP_DOB       NOT NULL DATE         
+COMP_EMAIL     NOT NULL VARCHAR2(50) 
+COMP_UNISTATUS NOT NULL CHAR(1)      
+COMP_PHONE     NOT NULL CHAR(10)     
+SQL> 
+SQL> ALTER TABLE competitor ADD (
+  2      comp_events_completed NUMBER(3) DEFAULT 0 NOT NULL
+  3  );
+
+Table COMPETITOR altered.
+
+SQL> 
+SQL> COMMENT ON COLUMN competitor.comp_events_completed IS
+  2      'Number of events completed by the competitor';
+
+Comment created.
+
+SQL> 
+SQL> DESC competitor
+Name                  Null?    Type         
+--------------------- -------- ------------ 
+COMP_NO               NOT NULL NUMBER(5)    
+COMP_FNAME                     VARCHAR2(30) 
+COMP_LNAME                     VARCHAR2(30) 
+COMP_GENDER           NOT NULL CHAR(1)      
+COMP_DOB              NOT NULL DATE         
+COMP_EMAIL            NOT NULL VARCHAR2(50) 
+COMP_UNISTATUS        NOT NULL CHAR(1)      
+COMP_PHONE            NOT NULL CHAR(10)     
+COMP_EVENTS_COMPLETED NOT NULL NUMBER(3)    
+SQL> 
+SQL> SELECT *
+  2  FROM competitor;
+
+   COMP_NO COMP_FNAME                     COMP_LNAME                     C COMP_DOB COMP_EMAIL                                         C COMP_PHONE COMP_EVENTS_COMPLETED
+---------- ------------------------------ ------------------------------ - -------- -------------------------------------------------- - ---------- ---------------------
+         1 Jia Jing                       Hew                            F 12/06/04 jiajing@gmail.com                                  Y 1234567890                     0
+         2 Yue Hua                        Chow                           F 10/10/04 yuehua@gmail.com                                   Y 2234567890                     0
+         3 Ming Er                        Chok                           F 01/07/04 minger@gmail.com                                   Y 3234567890                     0
+         4 Xiao Qian                      Boon                           F 19/02/04 xiaoqian@gmail.com                                 Y 4234567890                     0
+         5 Jia Ming                       Wah                            M 27/10/04 jiaming@gmail.com                                  Y 5234567890                     0
+         6 Celine                         Kang                           F 13/01/04 celine@gmail.com                                   N 6234567891                     0
+         7 Jolin                          Cai                            F 29/06/04 jolin@gmail.com                                    N 6234567892                     0
+         8 Queenie                        Teh                            F 25/12/90 queenie@gmail.com                                  N 6234567893                     0
+         9 Max                            Chong                          M 29/04/78 max@gmail.com                                      N 6234567894                     0
+        10 Brandon                        Lee                            M 03/04/90 brandon@gmail.com                                  N 6234567895                     0
+        11 Sophia                         Ng                             F 01/05/98 sophia@gmail.com                                   Y 9234567891                     0
+        12 Marcus                         Chan                           M 02/05/95 marcuschan@gmail.com                               N 9234567892                     0
+        13 Emily                          Tan                            F 10/07/01 emilytan@gmail.com                                 Y 9234567893                     0
+        14 Daniel                         Lim                            M 30/08/93 daniellim@gmail.com                                N 9234567894                     0
+        15 Jasmine                        Yap                            F 08/09/99 jasmineyap@gmail.com                               Y 9234567895                     0
+       100 Keith                          Rose                           M 23/09/04 keithrose@gmail.com                                Y 0422141112                     0
+       105 Jackson                        Bull                           M 21/09/04 jacksonbull@gmail.com                              Y 0422412524                     0
+
+17 rows selected. 
+
+SQL> 
+SQL> UPDATE competitor c1
+  2  SET comp_events_completed = 
+  3  (
+  4      SELECT COUNT(*)
+  5      FROM entry e JOIN competitor c2 ON e.comp_no = c2.comp_no
+  6      WHERE c2.comp_no = c1.comp_no and e.entry_finishtime IS NOT NULL
+  7  );
+
+17 rows updated.
+
+SQL> 
+SQL> SELECT *
+  2  FROM competitor;
+
+   COMP_NO COMP_FNAME                     COMP_LNAME                     C COMP_DOB COMP_EMAIL                                         C COMP_PHONE COMP_EVENTS_COMPLETED
+---------- ------------------------------ ------------------------------ - -------- -------------------------------------------------- - ---------- ---------------------
+         1 Jia Jing                       Hew                            F 12/06/04 jiajing@gmail.com                                  Y 1234567890                     3
+         2 Yue Hua                        Chow                           F 10/10/04 yuehua@gmail.com                                   Y 2234567890                     3
+         3 Ming Er                        Chok                           F 01/07/04 minger@gmail.com                                   Y 3234567890                     3
+         4 Xiao Qian                      Boon                           F 19/02/04 xiaoqian@gmail.com                                 Y 4234567890                     3
+         5 Jia Ming                       Wah                            M 27/10/04 jiaming@gmail.com                                  Y 5234567890                     3
+         6 Celine                         Kang                           F 13/01/04 celine@gmail.com                                   N 6234567891                     1
+         7 Jolin                          Cai                            F 29/06/04 jolin@gmail.com                                    N 6234567892                     1
+         8 Queenie                        Teh                            F 25/12/90 queenie@gmail.com                                  N 6234567893                     3
+         9 Max                            Chong                          M 29/04/78 max@gmail.com                                      N 6234567894                     1
+        10 Brandon                        Lee                            M 03/04/90 brandon@gmail.com                                  N 6234567895                     2
+        11 Sophia                         Ng                             F 01/05/98 sophia@gmail.com                                   Y 9234567891                     1
+        12 Marcus                         Chan                           M 02/05/95 marcuschan@gmail.com                               N 9234567892                     1
+        13 Emily                          Tan                            F 10/07/01 emilytan@gmail.com                                 Y 9234567893                     1
+        14 Daniel                         Lim                            M 30/08/93 daniellim@gmail.com                                N 9234567894                     0
+        15 Jasmine                        Yap                            F 08/09/99 jasmineyap@gmail.com                               Y 9234567895                     0
+       100 Keith                          Rose                           M 23/09/04 keithrose@gmail.com                                Y 0422141112                     0
+       105 Jackson                        Bull                           M 21/09/04 jacksonbull@gmail.com                              Y 0422412524                     0
+
+17 rows selected. 
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> DESC competitor
+Name                  Null?    Type         
+--------------------- -------- ------------ 
+COMP_NO               NOT NULL NUMBER(5)    
+COMP_FNAME                     VARCHAR2(30) 
+COMP_LNAME                     VARCHAR2(30) 
+COMP_GENDER           NOT NULL CHAR(1)      
+COMP_DOB              NOT NULL DATE         
+COMP_EMAIL            NOT NULL VARCHAR2(50) 
+COMP_UNISTATUS        NOT NULL CHAR(1)      
+COMP_PHONE            NOT NULL CHAR(10)     
+COMP_EVENTS_COMPLETED NOT NULL NUMBER(3)    
+SQL> 
+SQL> SELECT *
+  2  FROM competitor;
+
+   COMP_NO COMP_FNAME                     COMP_LNAME                     C COMP_DOB COMP_EMAIL                                         C COMP_PHONE COMP_EVENTS_COMPLETED
+---------- ------------------------------ ------------------------------ - -------- -------------------------------------------------- - ---------- ---------------------
+         1 Jia Jing                       Hew                            F 12/06/04 jiajing@gmail.com                                  Y 1234567890                     3
+         2 Yue Hua                        Chow                           F 10/10/04 yuehua@gmail.com                                   Y 2234567890                     3
+         3 Ming Er                        Chok                           F 01/07/04 minger@gmail.com                                   Y 3234567890                     3
+         4 Xiao Qian                      Boon                           F 19/02/04 xiaoqian@gmail.com                                 Y 4234567890                     3
+         5 Jia Ming                       Wah                            M 27/10/04 jiaming@gmail.com                                  Y 5234567890                     3
+         6 Celine                         Kang                           F 13/01/04 celine@gmail.com                                   N 6234567891                     1
+         7 Jolin                          Cai                            F 29/06/04 jolin@gmail.com                                    N 6234567892                     1
+         8 Queenie                        Teh                            F 25/12/90 queenie@gmail.com                                  N 6234567893                     3
+         9 Max                            Chong                          M 29/04/78 max@gmail.com                                      N 6234567894                     1
+        10 Brandon                        Lee                            M 03/04/90 brandon@gmail.com                                  N 6234567895                     2
+        11 Sophia                         Ng                             F 01/05/98 sophia@gmail.com                                   Y 9234567891                     1
+        12 Marcus                         Chan                           M 02/05/95 marcuschan@gmail.com                               N 9234567892                     1
+        13 Emily                          Tan                            F 10/07/01 emilytan@gmail.com                                 Y 9234567893                     1
+        14 Daniel                         Lim                            M 30/08/93 daniellim@gmail.com                                N 9234567894                     0
+        15 Jasmine                        Yap                            F 08/09/99 jasmineyap@gmail.com                               Y 9234567895                     0
+       100 Keith                          Rose                           M 23/09/04 keithrose@gmail.com                                Y 0422141112                     0
+       105 Jackson                        Bull                           M 21/09/04 jacksonbull@gmail.com                              Y 0422412524                     0
+
+17 rows selected. 
+
+SQL> 
+SQL> 
+SQL> --(b)
+SQL> 
+SQL> DESC entry
+Name              Null?    Type      
+----------------- -------- --------- 
+EVENT_ID          NOT NULL NUMBER(6) 
+ENTRY_NO          NOT NULL NUMBER(5) 
+ENTRY_STARTTIME            DATE      
+ENTRY_FINISHTIME           DATE      
+ENTRY_ELAPSEDTIME          DATE      
+COMP_NO           NOT NULL NUMBER(5) 
+TEAM_ID                    NUMBER(3) 
+CHAR_ID                    NUMBER(3) 
+SQL> 
+SQL> SELECT *
+  2  FROM entry;
+
+  EVENT_ID   ENTRY_NO ENTRY_ST ENTRY_FI ENTRY_EL    COMP_NO    TEAM_ID    CHAR_ID
+---------- ---------- -------- -------- -------- ---------- ---------- ----------
+         1          1 01/06/25 01/06/25 01/06/25          1          1          1
+         1          2 01/06/25 01/06/25 01/06/25          2          2          1
+         1          3 01/06/25 01/06/25 01/06/25          3          1          1
+         1          4 01/06/25 01/06/25 01/06/25          4          1          1
+         1          5 01/06/25 01/06/25 01/06/25          5          2          1
+         1          6                                     6          2          1
+         1          7                                     7          2          1
+         2          1 01/06/25 01/06/25 01/06/25          8          1          1
+         2          2                                     9          1          1
+         2          3 01/06/25 01/06/25 01/06/25         10          2          1
+         3          1 01/06/25 01/06/25 01/06/25          1          5          1
+         3          2 01/06/25 01/06/25 01/06/25          2          4          1
+         3          3 01/06/25 01/06/25 01/06/25          3          5          1
+         3          4 01/06/25 01/06/25 01/06/25          4          5          1
+         3          5 01/06/25 01/06/25 01/06/25          5          4          1
+         4          1 01/06/25 01/06/25 01/06/25          8          4          1
+         4          2 01/06/25 01/06/25 01/06/25          9          5          1
+         4          3                                    10          5          1
+         5          1 01/06/25 01/06/25 01/06/25         12          5          1
+         5          2 01/06/25 01/06/25 01/06/25         13          5          1
+         6          1 01/06/25 01/06/25 01/06/25          1          6          1
+         6          2 01/06/25 01/06/25 01/06/25          2          7          1
+         6          3 01/06/25 01/06/25 01/06/25          3          6          1
+         6          4 01/06/25 01/06/25 01/06/25          4          6          1
+         6          5 01/06/25 01/06/25 01/06/25          5          7          1
+         7          1 01/06/25 01/06/25 01/06/25         10          7          1
+         7          2 01/06/25 01/06/25 01/06/25         11          7          1
+        10          1 01/06/25 01/06/25 01/06/25          6          3          1
+        10          2 01/06/25 01/06/25 01/06/25          7          3          1
+        10          3 01/06/25 01/06/25 01/06/25          8          3          1
+        12          1                                   105                     2
+
+31 rows selected. 
+
+SQL> 
+SQL> DROP TABLE entry_charity CASCADE CONSTRAINTS PURGE;
+
+Table ENTRY_CHARITY dropped.
+
+SQL> 
+SQL> CREATE TABLE entry_charity (
+  2      event_id   NUMBER(6) NOT NULL,
+  3      entry_no   NUMBER(5) NOT NULL,
+  4      char_id    NUMBER(3) NOT NULL,
+  5      char_percentage NUMBER(3) DEFAULT 0 NOT NULL
+  6  );
+
+Table ENTRY_CHARITY created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry_charity.event_id IS
+  2      'Event id (event id of competitor participated)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry_charity.entry_no IS
+  2      'Entry number (entry number of competitor participated)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry_charity.char_id IS
+  2      'Charity unique identifier (charity of competitor supported)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN entry_charity.char_percentage IS
+  2      'Charity fund percentage (0 to 100) from the total funds raised';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE entry_charity ADD CONSTRAINT entry_charity_pk PRIMARY KEY (event_id, entry_no, char_id);
+
+Table ENTRY_CHARITY altered.
+
+SQL> 
+SQL> ALTER TABLE entry_charity ADD CONSTRAINT chk_percentage_valid CHECK (char_percentage BETWEEN 0 AND 100);
+
+Table ENTRY_CHARITY altered.
+
+SQL> 
+SQL> ALTER TABLE entry_charity ADD CONSTRAINT entrycharity_entry_fk FOREIGN KEY (event_id, entry_no)
+  2      REFERENCES entry (event_id, entry_no);
+
+Table ENTRY_CHARITY altered.
+
+SQL> 
+SQL> ALTER TABLE entry_charity ADD CONSTRAINT entrycharity_charity_fk FOREIGN KEY (char_id)
+  2      REFERENCES charity (char_id);
+
+Table ENTRY_CHARITY altered.
+
+SQL> 
+SQL> INSERT INTO entry_charity (
+  2      event_id, 
+  3      entry_no, 
+  4      char_id, 
+  5      char_percentage)
+  6  SELECT event_id, entry_no, char_id, 100
+  7  FROM entry
+  8  WHERE char_id IS NOT NULL;
+
+31 rows inserted.
+
+SQL> 
+SQL> ALTER TABLE entry DROP CONSTRAINT charity_entry_fk;
+
+Table ENTRY altered.
+
+SQL> 
+SQL> ALTER TABLE entry DROP COLUMN char_id;
+
+Table ENTRY altered.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> DESC entry_charity
+Name            Null?    Type      
+--------------- -------- --------- 
+EVENT_ID        NOT NULL NUMBER(6) 
+ENTRY_NO        NOT NULL NUMBER(5) 
+CHAR_ID         NOT NULL NUMBER(3) 
+CHAR_PERCENTAGE NOT NULL NUMBER(3) 
+SQL> 
+SQL> SELECT *
+  2  FROM entry_charity;
+
+  EVENT_ID   ENTRY_NO    CHAR_ID CHAR_PERCENTAGE
+---------- ---------- ---------- ---------------
+         1          1          1             100
+         1          2          1             100
+         1          3          1             100
+         1          4          1             100
+         1          5          1             100
+         1          6          1             100
+         1          7          1             100
+         2          1          1             100
+         2          2          1             100
+         2          3          1             100
+         3          1          1             100
+         3          2          1             100
+         3          3          1             100
+         3          4          1             100
+         3          5          1             100
+         4          1          1             100
+         4          2          1             100
+         4          3          1             100
+         5          1          1             100
+         5          2          1             100
+         6          1          1             100
+         6          2          1             100
+         6          3          1             100
+         6          4          1             100
+         6          5          1             100
+         7          1          1             100
+         7          2          1             100
+        10          1          1             100
+        10          2          1             100
+        10          3          1             100
+        12          1          2             100
+
+31 rows selected. 
+
+SQL> 
+SQL> DESC entry
+Name              Null?    Type      
+----------------- -------- --------- 
+EVENT_ID          NOT NULL NUMBER(6) 
+ENTRY_NO          NOT NULL NUMBER(5) 
+ENTRY_STARTTIME            DATE      
+ENTRY_FINISHTIME           DATE      
+ENTRY_ELAPSEDTIME          DATE      
+COMP_NO           NOT NULL NUMBER(5) 
+TEAM_ID                    NUMBER(3) 
+SQL> 
+SQL> SELECT *
+  2  FROM entry;
+
+  EVENT_ID   ENTRY_NO ENTRY_ST ENTRY_FI ENTRY_EL    COMP_NO    TEAM_ID
+---------- ---------- -------- -------- -------- ---------- ----------
+         1          1 01/06/25 01/06/25 01/06/25          1          1
+         1          2 01/06/25 01/06/25 01/06/25          2          2
+         1          3 01/06/25 01/06/25 01/06/25          3          1
+         1          4 01/06/25 01/06/25 01/06/25          4          1
+         1          5 01/06/25 01/06/25 01/06/25          5          2
+         1          6                                     6          2
+         1          7                                     7          2
+         2          1 01/06/25 01/06/25 01/06/25          8          1
+         2          2                                     9          1
+         2          3 01/06/25 01/06/25 01/06/25         10          2
+         3          1 01/06/25 01/06/25 01/06/25          1          5
+         3          2 01/06/25 01/06/25 01/06/25          2          4
+         3          3 01/06/25 01/06/25 01/06/25          3          5
+         3          4 01/06/25 01/06/25 01/06/25          4          5
+         3          5 01/06/25 01/06/25 01/06/25          5          4
+         4          1 01/06/25 01/06/25 01/06/25          8          4
+         4          2 01/06/25 01/06/25 01/06/25          9          5
+         4          3                                    10          5
+         5          1 01/06/25 01/06/25 01/06/25         12          5
+         5          2 01/06/25 01/06/25 01/06/25         13          5
+         6          1 01/06/25 01/06/25 01/06/25          1          6
+         6          2 01/06/25 01/06/25 01/06/25          2          7
+         6          3 01/06/25 01/06/25 01/06/25          3          6
+         6          4 01/06/25 01/06/25 01/06/25          4          6
+         6          5 01/06/25 01/06/25 01/06/25          5          7
+         7          1 01/06/25 01/06/25 01/06/25         10          7
+         7          2 01/06/25 01/06/25 01/06/25         11          7
+        10          1 01/06/25 01/06/25 01/06/25          6          3
+        10          2 01/06/25 01/06/25 01/06/25          7          3
+        10          3 01/06/25 01/06/25 01/06/25          8          3
+        12          1                                   105           
+
+31 rows selected. 
+
+SQL> 
+SQL> ------------- Task 5 SQL SELECT --------------------------------------------
+SQL> @T5-rm-plsql.sql
+SQL> --*****PLEASE ENTER YOUR DETAILS BELOW*****
+SQL> --T5-rm-plsql.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> /* Comments for your marker:
+SQL>assumption: each event must start and finish on the same day
+SQL>
+SQL>*/
+SQL> 
+SQL> 
+SQL> --(a)
+SQL> -- Write your create function statemet,
+SQL> -- finish it with a slash(/) followed by a blank line
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION calculate_elapsed_time(
+  2      start_time  IN DATE,
+  3      finish_time IN DATE
+  4  ) RETURN DATE IS
+  5      elapsed_time DATE;
+  6  BEGIN
+  7      elapsed_time := TO_DATE('00:00:00', 'HH24:MI:SS') + (finish_time - start_time);
+  8      DBMS_OUTPUT.PUT_LINE('Elapsed time calculated successfully: ' || TO_CHAR(elapsed_time, 'HH24:MI:SS'));
+  9      RETURN elapsed_time;
+ 10  END;
+ 11  /
+
+Function CALCULATE_ELAPSED_TIME compiled
+
+SQL> 
+SQL> -- Write Test Harness for (a)
+SQL> 
+SQL> SELECT
+  2      event_id,
+  3      entry_no,
+  4      TO_CHAR(calculate_elapsed_time(entry_starttime, entry_finishtime), 'HH24:MI:SS') as elapsed_time_calculated
+  5  FROM entry 
+  6  WHERE entry_starttime IS NOT NULL AND entry_finishtime IS NOT NULL 
+  7  ORDER BY event_id, entry_no;
+
+  EVENT_ID   ENTRY_NO ELAPSED_
+---------- ---------- --------
+         1          1 01:15:04
+         1          2 01:19:10
+         1          3 01:19:00
+         1          4 01:19:02
+         1          5 01:19:00
+         2          1 01:19:01
+         2          3 01:14:11
+         3          1 01:19:01
+         3          2 01:11:10
+         3          3 01:13:31
+         3          4 01:11:11
+         3          5 01:19:01
+         4          1 01:12:04
+         4          2 01:12:11
+         5          1 01:22:11
+         5          2 01:32:02
+         6          1 01:11:09
+         6          2 01:14:22
+         6          3 01:04:22
+         6          4 01:24:11
+         6          5 01:11:10
+         7          1 01:10:11
+         7          2 01:04:01
+        10          1 01:19:25
+        10          2 01:19:32
+        10          3 01:13:02
+
+26 rows selected. 
+
+Elapsed time calculated successfully: 01:15:04
+Elapsed time calculated successfully: 01:19:10
+Elapsed time calculated successfully: 01:19:00
+Elapsed time calculated successfully: 01:19:02
+Elapsed time calculated successfully: 01:19:00
+Elapsed time calculated successfully: 01:19:01
+Elapsed time calculated successfully: 01:14:11
+Elapsed time calculated successfully: 01:19:01
+Elapsed time calculated successfully: 01:11:10
+Elapsed time calculated successfully: 01:13:31
+Elapsed time calculated successfully: 01:11:11
+Elapsed time calculated successfully: 01:19:01
+Elapsed time calculated successfully: 01:12:04
+Elapsed time calculated successfully: 01:12:11
+Elapsed time calculated successfully: 01:22:11
+Elapsed time calculated successfully: 01:32:02
+Elapsed time calculated successfully: 01:11:09
+Elapsed time calculated successfully: 01:14:22
+Elapsed time calculated successfully: 01:04:22
+Elapsed time calculated successfully: 01:24:11
+Elapsed time calculated successfully: 01:11:10
+Elapsed time calculated successfully: 01:10:11
+Elapsed time calculated successfully: 01:04:01
+Elapsed time calculated successfully: 01:19:25
+Elapsed time calculated successfully: 01:19:32
+Elapsed time calculated successfully: 01:13:02
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> --(b)
+SQL> -- Write your create trigger statement,
+SQL> -- finish it with a slash(/) followed by a blank line
+SQL> -- BEFORE INSERT OR UPDATE ON entry
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER trg_entry_elapsed_time
+  2  BEFORE UPDATE OF entry_finishtime ON entry
+  3  FOR EACH ROW
+  4  BEGIN
+  5      IF :NEW.entry_starttime IS NOT NULL AND :NEW.entry_finishtime IS NOT NULL THEN
+  6  
+  7          IF :NEW.entry_finishtime < :NEW.entry_starttime THEN
+  8              RAISE_APPLICATION_ERROR(-20001, 'Finish time cannot be before the start time.');
+  9          END IF;
+ 10  
+ 11          :NEW.entry_elapsedtime := calculate_elapsed_time(:NEW.entry_starttime, :NEW.entry_finishtime);
+ 12          DBMS_OUTPUT.PUT_LINE('Elapsed time is calculated successfully');
+ 13  
+ 14      ELSE
+ 15          RAISE_APPLICATION_ERROR(-20001, 'Competitor did not finish the event.');
+ 16  
+ 17      END IF;
+ 18  END;
+ 19  /
+
+Trigger TRG_ENTRY_ELAPSED_TIME compiled
+
+SQL> 
+SQL> -- Write Test Harness for (b)
+SQL> 
+SQL> DESC ENTRY
+Name              Null?    Type      
+----------------- -------- --------- 
+EVENT_ID          NOT NULL NUMBER(6) 
+ENTRY_NO          NOT NULL NUMBER(5) 
+ENTRY_STARTTIME            DATE      
+ENTRY_FINISHTIME           DATE      
+ENTRY_ELAPSEDTIME          DATE      
+COMP_NO           NOT NULL NUMBER(5) 
+TEAM_ID                    NUMBER(3) 
+SQL> 
+SQL> -- test invalid: Finish time cannot be before the start time.
+SQL> -- before 
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         1         12 -        -        -       
+
+31 rows selected. 
+
+SQL> 
+SQL> -- test
+SQL> BEGIN
+  2      INSERT INTO entry (event_id, entry_no, entry_starttime, entry_finishtime, entry_elapsedtime, comp_no, team_id
+  3      ) VALUES ( 
+  4          11,
+  5          2,
+  6          TO_DATE('11:30:01','HH24:MI:SS'),
+  7          NULL,
+  8          NULL,
+  9          15,
+ 10          NULL
+ 11      );
+ 12  
+ 13      UPDATE entry
+ 14      SET entry_finishtime = TO_DATE('10:50:34', 'HH24:MI:SS')
+ 15      WHERE entry_no = 2 AND event_id = 11;
+ 16  END;
+ 17  /
+BEGIN
+*
+ERROR at line 1:
+ORA-20001: Finish time cannot be before the start time.
+ORA-06512: at "JHEW0010.TRG_ENTRY_ELAPSED_TIME", line 5
+ORA-04088: error during execution of trigger 'JHEW0010.TRG_ENTRY_ELAPSED_TIME'
+ORA-06512: at line 13
+
+https://docs.oracle.com/error-help/db/ora-20001/
+
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-20001/
+https://docs.oracle.com/error-help/db/ora-06512/
+https://docs.oracle.com/error-help/db/ora-04088/
+SQL> 
+SQL> -- after
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         1         12 -        -        -       
+
+31 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test invalid: Competitor did not compete and finish the event yet.
+SQL> -- before
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         1         12 -        -        -       
+
+31 rows selected. 
+
+SQL> 
+SQL> -- test
+SQL> BEGIN
+  2      INSERT INTO entry (event_id, entry_no, entry_starttime, entry_finishtime, entry_elapsedtime, comp_no, team_id
+  3      ) VALUES ( 
+  4          11,
+  5          3,
+  6          TO_DATE('11:30:01','HH24:MI:SS'),
+  7          NULL,
+  8          NULL,
+  9          14,
+ 10          NULL
+ 11      );
+ 12  
+ 13      UPDATE entry
+ 14      SET entry_finishtime = NULL
+ 15      WHERE entry_no = 3 AND event_id = 11;
+ 16  END;
+ 17  /
+BEGIN
+*
+ERROR at line 1:
+ORA-20001: Competitor did not finish the event.
+ORA-06512: at "JHEW0010.TRG_ENTRY_ELAPSED_TIME", line 12
+ORA-04088: error during execution of trigger 'JHEW0010.TRG_ENTRY_ELAPSED_TIME'
+ORA-06512: at line 13
+
+https://docs.oracle.com/error-help/db/ora-20001/
+
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-20001/
+https://docs.oracle.com/error-help/db/ora-06512/
+https://docs.oracle.com/error-help/db/ora-04088/
+SQL> 
+SQL> -- after
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         1         12 -        -        -       
+
+31 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test valid
+SQL> -- before
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         1         12 -        -        -       
+
+31 rows selected. 
+
+SQL> 
+SQL> -- test
+SQL> BEGIN
+  2      INSERT INTO entry (event_id, entry_no, entry_starttime, entry_finishtime, entry_elapsedtime, comp_no, team_id
+  3      ) VALUES ( 
+  4          11,
+  5          4,
+  6          TO_DATE('08:30:01','HH24:MI:SS'),
+  7          NULL,
+  8          NULL,
+  9          13,
+ 10          NULL
+ 11      );
+ 12  
+ 13      UPDATE entry
+ 14      SET entry_finishtime = TO_DATE('11:50:34', 'HH24:MI:SS')
+ 15      WHERE entry_no = 4 AND event_id = 11;
+ 16  END;
+ 17  /
+Elapsed time calculated successfully: 03:20:33
+Elapsed time is calculated successfully
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT entry_no, event_id, nvl(to_char(entry_starttime, 'HH24:MI:SS'), '-') as start_time, nvl(to_char(entry_finishtime, 'HH24:MI:SS'), '-') as finish_time, nvl(to_char(entry_elapsedtime, 'HH24:MI:SS'), '-') as elapsed_time 
+  2  FROM entry;
+
+  ENTRY_NO   EVENT_ID START_TI FINISH_T ELAPSED_
+---------- ---------- -------- -------- --------
+         1          1 09:30:08 10:45:12 01:15:04
+         2          1 09:30:05 10:49:15 01:19:10
+         3          1 09:30:11 10:49:11 01:19:00
+         4          1 09:30:01 10:49:03 01:19:02
+         5          1 09:30:02 10:49:02 01:19:00
+         6          1 -        -        -       
+         7          1 -        -        -       
+         1          2 08:30:03 09:49:04 01:19:01
+         2          2 -        -        -       
+         3          2 08:30:34 09:44:45 01:14:11
+         1          3 09:00:05 10:19:06 01:19:01
+         2          3 09:00:07 10:11:17 01:11:10
+         3          3 09:00:08 10:13:39 01:13:31
+         4          3 09:00:23 10:11:34 01:11:11
+         5          3 09:00:12 10:19:13 01:19:01
+         1          4 08:30:14 09:42:18 01:12:04
+         2          4 08:30:34 09:42:45 01:12:11
+         3          4 -        -        -       
+         1          5 08:00:23 09:22:34 01:22:11
+         2          5 08:00:11 09:32:13 01:32:02
+         1          6 08:30:10 09:41:19 01:41:09
+         2          6 08:30:23 09:44:45 01:44:22
+         3          6 08:30:22 09:34:44 01:04:22
+         4          6 08:30:12 09:54:23 01:24:11
+         5          6 08:30:45 09:41:55 01:11:10
+         1          7 08:30:34 09:40:45 01:10:11
+         2          7 08:30:37 09:34:38 01:14:01
+         1         10 08:00:25 09:19:50 01:19:25
+         2         10 08:00:10 09:19:42 01:19:32
+         3         10 08:00:20 09:13:22 01:13:02
+         4         11 08:30:01 11:50:34 03:20:33
+         1         12 -        -        -       
+
+32 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> --(c)
+SQL> -- Write your create procedure statement,
+SQL> -- finish it with a slash(/) followed by a blank line
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE prc_entry_registration(
+  2      p_competitor_no   IN NUMBER,
+  3      p_carnival_name   IN VARCHAR2,
+  4      p_event_type_desc IN VARCHAR2,
+  5      p_team_name       IN VARCHAR2,
+  6      p_charity_name    IN VARCHAR2,
+  7      p_output          OUT VARCHAR2
+  8  ) IS
+  9      var_carnival_date   DATE;
+ 10      var_event_id        NUMBER;
+ 11      var_team_id         NUMBER;
+ 12      var_charity_id      NUMBER;
+ 13      var_entry_found     NUMBER;
+ 14      var_team_found      NUMBER;
+ 15      var_entry_no        NUMBER;
+ 16      var_charity_found   NUMBER;
+ 17  BEGIN
+ 18      IF (p_competitor_no IS NULL OR p_carnival_name IS NULL OR p_event_type_desc is NULL) THEN
+ 19          p_output := 'Incomplete registration information (competitor number, carnival name, event type), registration process cancelled';
+ 20      ELSE
+ 21          -- one competitor can only enter one event at a particular carnival
+ 22          SELECT COUNT(*) INTO var_entry_found
+ 23          FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date
+ 24          WHERE e.comp_no = p_competitor_no AND UPPER(c.carn_name) = UPPER(p_carnival_name);
+ 25  
+ 26          -- when competitor join 1 event already, it shouldnt join another one
+ 27          IF var_entry_found > 0 THEN
+ 28              p_output := 'Invalid multiple entry, registration process cancelled';
+ 29          ELSE
+ 30              -- get the carnival date
+ 31              SELECT c.carn_date INTO var_carnival_date
+ 32              FROM carnival c
+ 33              WHERE UPPER(c.carn_name) = UPPER(p_carnival_name);
+ 34  
+ 35              -- get the event id
+ 36              SELECT e.event_id INTO var_event_id
+ 37              FROM event e JOIN eventtype et ON e.eventtype_code = et.eventtype_code
+ 38              WHERE to_char(e.carn_date, 'DD/MON/YYYY') = to_char(var_carnival_date, 'DD/MON/YYYY') AND UPPER(et.eventtype_desc) = UPPER(p_event_type_desc);
+ 39  
+ 40              -- get new entry no
+ 41              SELECT COUNT(*) + 1 INTO var_entry_no
+ 42              FROM entry e
+ 43              WHERE e.event_id = var_event_id;
+ 44  
+ 45              -- check if team exists
+ 46              SELECT COUNT(*) INTO var_team_found
+ 47              FROM team t JOIN carnival c ON t.carn_date = c.carn_date
+ 48              WHERE UPPER(t.team_name) = UPPER(p_team_name) AND to_char(t.carn_date, 'DD/MON/YYYY') = to_char(var_carnival_date, 'DD/MON/YYYY');
+ 49  
+ 50              -- check if charity exists
+ 51              SELECT COUNT(*) INTO var_charity_found
+ 52              FROM charity c
+ 53              WHERE UPPER(c.char_name) = UPPER(p_charity_name);
+ 54  
+ 55              -- check if charity exists
+ 56              IF (var_charity_found > 0 OR p_charity_name is NULL) THEN
+ 57  
+ 58                  IF p_charity_name is NOT NULL THEN
+ 59                      SELECT c.char_id INTO var_charity_id
+ 60                      FROM charity c
+ 61                      WHERE UPPER(c.char_name) = UPPER(p_charity_name);
+ 62                  END IF;
+ 63  
+ 64                  -- insert entry
+ 65                  INSERT INTO entry (
+ 66                      event_id,
+ 67                      entry_no,
+ 68                      entry_starttime,
+ 69                      entry_finishtime,
+ 70                      entry_elapsedtime,
+ 71                      comp_no,
+ 72                      team_id
+ 73                  ) VALUES ( 
+ 74                      var_event_id,
+ 75                      var_entry_no,
+ 76                      NULL,
+ 77                      NULL,
+ 78                      NULL,
+ 79                      p_competitor_no,
+ 80                      NULL
+ 81                  );
+ 82  
+ 83                  IF p_charity_name is NOT NULL THEN
+ 84                      INSERT INTO entry_charity (
+ 85                          event_id, 
+ 86                          entry_no, 
+ 87                          char_id, 
+ 88                          char_percentage
+ 89                      ) VALUES ( 
+ 90                          var_event_id,
+ 91                          var_entry_no,
+ 92                          var_charity_id,
+ 93                          100
+ 94                      );
+ 95                  END IF;
+ 96  
+ 97                  IF p_team_name is NOT NULL THEN
+ 98                  -- if the inputted team name does not exist, a new team will be created, 
+ 99                  -- and the competitor’s details will be stored as the team leader
+100                      IF var_team_found = 0 THEN
+101  
+102                          -- insert new team and assign competitor as team leader
+103                          INSERT INTO team (
+104                              team_id, 
+105                              team_name,
+106                              carn_date,
+107                              event_id,
+108                              entry_no
+109                          )
+110                          VALUES (
+111                              team_seq.NEXTVAL, 
+112                              p_team_name,
+113                              var_carnival_date,
+114                              var_event_id,
+115                              var_entry_no
+116                          );
+117  
+118                          var_team_id := team_seq.CURRVAL;
+119                      ELSE
+120                          -- get existing team ID
+121                          SELECT t.team_id INTO var_team_id
+122                          FROM team t
+123                          WHERE UPPER(t.team_name) = UPPER(p_team_name) AND t.carn_date = var_carnival_date;
+124                      END IF;
+125  
+126                      UPDATE entry
+127                      SET
+128                          team_id = var_team_id
+129                      WHERE 
+130                          event_id = var_event_id AND entry_no = var_entry_no;
+131  
+132                  END IF;
+133  
+134                  IF p_team_name is NULL AND p_charity_name is NULL THEN
+135                      p_output := 'Registration successful for competitor ' || p_competitor_no || ' in carnival ' || p_carnival_name || ' in event ' || p_event_type_desc || ' individually ' || ' with entry no ' || var_entry_no;
+136                  ELSIF p_team_name is NULL THEN
+137                      p_output := 'Registration successful for competitor ' || p_competitor_no || ' in carnival ' || p_carnival_name || ' in event ' || p_event_type_desc || ' individually ' || ' supporting ' || p_charity_name || ' with entry no ' || var_entry_no;
+138                  ELSIF p_charity_name is NULL THEN
+139                      p_output := 'Registration successful for competitor ' || p_competitor_no || ' in carnival ' || p_carnival_name || ' in event ' || p_event_type_desc || ' in team ' || p_team_name || ' with entry no ' || var_entry_no;
+140                  ELSE
+141                      p_output := 'Registration successful for competitor ' || p_competitor_no || ' in carnival ' || p_carnival_name || ' in event ' || p_event_type_desc || ' in team ' || p_team_name || ' supporting ' || p_charity_name || ' with entry no ' || var_entry_no;
+142                  END IF;
+143  
+144              ELSE
+145                  p_output := 'Invalid charity name, registration process cancelled';
+146              END IF;
+147  
+148          END IF;
+149  
+150      END IF;
+151  
+152  EXCEPTION
+153      WHEN OTHERS THEN
+154          p_output := SQLERRM;
+155  END;
+156  /
+
+Procedure PRC_ENTRY_REGISTRATION compiled
+
+SQL> 
+SQL> 
+SQL> -- Write Test Harness for (c)
+SQL> 
+SQL> -- test 1:
+SQL> -- before
+SQL> SELECT *
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date
+  3  WHERE e.comp_no = 1 AND UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO ENTRY_ST ENTRY_FI ENTRY_EL    COMP_NO    TEAM_ID   EVENT_ID CARN_DAT EVE EVENT_ST CARN_DAT CARN_NAME                                          CARN_DIRECTOR                                      CARN_LOCATION                                     
+---------- ---------- -------- -------- -------- ---------- ---------- ---------- -------- --- -------- -------- -------------------------------------------------- -------------------------------------------------- --------------------------------------------------
+         1          1 01/06/25 01/06/25 01/06/25          1          1          1 22/09/24 5K  01/06/25 22/09/24 RM Spring Series Clayton 2024                      Mary Imparo                                        Scenic Blvd, Clayton, VIC, 3800                   
+
+SQL> 
+SQL> -- test invalid multiple entry
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(1, 'RM Spring Series Clayton 2024', '10 Km Run', 'Team B', 'RSPCA', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Invalid multiple entry, registration process cancelled
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT *
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date
+  3  WHERE e.comp_no = 1 AND UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO ENTRY_ST ENTRY_FI ENTRY_EL    COMP_NO    TEAM_ID   EVENT_ID CARN_DAT EVE EVENT_ST CARN_DAT CARN_NAME                                          CARN_DIRECTOR                                      CARN_LOCATION                                     
+---------- ---------- -------- -------- -------- ---------- ---------- ---------- -------- --- -------- -------- -------------------------------------------------- -------------------------------------------------- --------------------------------------------------
+         1          1 01/06/25 01/06/25 01/06/25          1          1          1 22/09/24 5K  01/06/25 22/09/24 RM Spring Series Clayton 2024                      Mary Imparo                                        Scenic Blvd, Clayton, VIC, 3800                   
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 2:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                     
+---------- ---------- ---------- ------------------------------
+         1          1          1 TEAM A                        
+         1          2          2 TEAM B                        
+         1          3          1 TEAM A                        
+         1          4          1 TEAM A                        
+         1          5          2 TEAM B                        
+         1          6          2 TEAM B                        
+         1          7          2 TEAM B                        
+         2          1          1 TEAM A                        
+         2          2          1 TEAM A                        
+         2          3          2 TEAM B                        
+
+10 rows selected. 
+
+SQL> 
+SQL> -- test team name does not exist
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(15, 'RM Spring Series Clayton 2024', '5 Km Run', 'New New New', 'RSPCA', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Registration successful for competitor 15 in carnival RM Spring Series Clayton 2024 in event 5 Km Run in team New New New supporting RSPCA with entry no 8
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                     
+---------- ---------- ---------- ------------------------------
+         1          1          1 TEAM A                        
+         1          2          2 TEAM B                        
+         1          3          1 TEAM A                        
+         1          4          1 TEAM A                        
+         1          5          2 TEAM B                        
+         1          6          2 TEAM B                        
+         1          7          2 TEAM B                        
+         2          1          1 TEAM A                        
+         2          2          1 TEAM A                        
+         2          3          2 TEAM B                        
+         1          8        105 New New New                   
+
+11 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 3:
+SQL> -- before
+SQL> SELECT char_id, char_name 
+  2  FROM charity;
+
+   CHAR_ID CHAR_NAME                     
+---------- ------------------------------
+         1 RSPCA                         
+         2 Beyond Blue                   
+         3 Salvation Army                
+         4 Amnesty International         
+
+SQL> 
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> -- test charity does not exist
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(11, 'RM Spring Series Clayton 2024', '5 Km Run', 'Team A', 'Hello Charity', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Invalid charity name, registration process cancelled
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT char_id, char_name 
+  2  FROM charity;
+
+   CHAR_ID CHAR_NAME                     
+---------- ------------------------------
+         1 RSPCA                         
+         2 Beyond Blue                   
+         3 Salvation Army                
+         4 Amnesty International         
+
+SQL> 
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 4:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> -- test Incomplete registration information on competitor number
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(NULL, 'RM Spring Series Clayton 2024', '5 Km Run', 'Team A', 'Hello Charity', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Incomplete registration information (competitor number, carnival name, event type), registration process cancelled
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 5:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> -- test Incomplete registration information on carnival name
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(11, NULL, '5 Km Run', 'Team A', 'Hello Charity', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Incomplete registration information (competitor number, carnival name, event type), registration process cancelled
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 6:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> -- test Incomplete registration information on event type
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(11, 'RM Spring Series Clayton 2024', NULL, 'Team A', 'Hello Charity', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Incomplete registration information (competitor number, carnival name, event type), registration process cancelled
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.team_id, t.team_name, ec.char_id, cc.char_name, e.comp_no
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                         COMP_NO
+---------- ---------- ---------- ------------------------------ ---------- ------------------------------ ----------
+         1          1          1 TEAM A                                  1 RSPCA                                   1
+         1          2          2 TEAM B                                  1 RSPCA                                   2
+         1          3          1 TEAM A                                  1 RSPCA                                   3
+         1          4          1 TEAM A                                  1 RSPCA                                   4
+         1          5          2 TEAM B                                  1 RSPCA                                   5
+         1          6          2 TEAM B                                  1 RSPCA                                   6
+         1          7          2 TEAM B                                  1 RSPCA                                   7
+         1          8        105 New New New                             1 RSPCA                                  15
+         2          1          1 TEAM A                                  1 RSPCA                                   8
+         2          2          1 TEAM A                                  1 RSPCA                                   9
+         2          3          2 TEAM B                                  1 RSPCA                                  10
+
+11 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 7:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, e.team_id, t.team_name, ec.char_id, cc.char_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                     
+---------- ---------- ---------- ---------- ------------------------------ ---------- ------------------------------
+         1          1          1          1 TEAM A                                  1 RSPCA                         
+         1          2          2          2 TEAM B                                  1 RSPCA                         
+         1          3          3          1 TEAM A                                  1 RSPCA                         
+         1          4          4          1 TEAM A                                  1 RSPCA                         
+         1          5          5          2 TEAM B                                  1 RSPCA                         
+         1          6          6          2 TEAM B                                  1 RSPCA                         
+         1          7          7          2 TEAM B                                  1 RSPCA                         
+         1          8         15        105 New New New                             1 RSPCA                         
+         2          1          8          1 TEAM A                                  1 RSPCA                         
+         2          2          9          1 TEAM A                                  1 RSPCA                         
+         2          3         10          2 TEAM B                                  1 RSPCA                         
+
+11 rows selected. 
+
+SQL> 
+SQL>  -- test valid registration with team and charity
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(11, 'RM Spring Series Clayton 2024', '5 Km Run', 'Team A', 'RSPCA', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Registration successful for competitor 11 in carnival RM Spring Series Clayton 2024 in event 5 Km Run in team Team A supporting RSPCA with entry no 9
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, e.team_id, t.team_name, ec.char_id, cc.char_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    TEAM_ID TEAM_NAME                         CHAR_ID CHAR_NAME                     
+---------- ---------- ---------- ---------- ------------------------------ ---------- ------------------------------
+         1          1          1          1 TEAM A                                  1 RSPCA                         
+         1          2          2          2 TEAM B                                  1 RSPCA                         
+         1          3          3          1 TEAM A                                  1 RSPCA                         
+         1          4          4          1 TEAM A                                  1 RSPCA                         
+         1          5          5          2 TEAM B                                  1 RSPCA                         
+         1          6          6          2 TEAM B                                  1 RSPCA                         
+         1          7          7          2 TEAM B                                  1 RSPCA                         
+         1          8         15        105 New New New                             1 RSPCA                         
+         1          9         11          1 TEAM A                                  1 RSPCA                         
+         2          1          8          1 TEAM A                                  1 RSPCA                         
+         2          2          9          1 TEAM A                                  1 RSPCA                         
+         2          3         10          2 TEAM B                                  1 RSPCA                         
+
+12 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 8:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, ec.char_id, cc.char_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    CHAR_ID CHAR_NAME                     
+---------- ---------- ---------- ---------- ------------------------------
+         1          1          1          1 RSPCA                         
+         1          2          2          1 RSPCA                         
+         1          3          3          1 RSPCA                         
+         1          4          4          1 RSPCA                         
+         1          5          5          1 RSPCA                         
+         1          6          6          1 RSPCA                         
+         1          7          7          1 RSPCA                         
+         1          8         15          1 RSPCA                         
+         1          9         11          1 RSPCA                         
+         2          1          8          1 RSPCA                         
+         2          2          9          1 RSPCA                         
+         2          3         10          1 RSPCA                         
+
+12 rows selected. 
+
+SQL> 
+SQL>  -- test valid registration with charity (not member of any team)
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(12, 'RM Spring Series Clayton 2024', '5 Km Run', NULL, 'RSPCA', output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Registration successful for competitor 12 in carnival RM Spring Series Clayton 2024 in event 5 Km Run individually  supporting RSPCA with entry no 10
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, ec.char_id, cc.char_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN entry_charity ec ON (ec.event_id = e.event_id AND ec.entry_no = e.entry_no) JOIN charity cc ON ec.char_id = cc.char_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    CHAR_ID CHAR_NAME                     
+---------- ---------- ---------- ---------- ------------------------------
+         1          1          1          1 RSPCA                         
+         1          2          2          1 RSPCA                         
+         1          3          3          1 RSPCA                         
+         1          4          4          1 RSPCA                         
+         1          5          5          1 RSPCA                         
+         1          6          6          1 RSPCA                         
+         1          7          7          1 RSPCA                         
+         1          8         15          1 RSPCA                         
+         1          9         11          1 RSPCA                         
+         1         10         12          1 RSPCA                         
+         2          1          8          1 RSPCA                         
+         2          2          9          1 RSPCA                         
+         2          3         10          1 RSPCA                         
+
+13 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- test 9:
+SQL> -- before
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, e.team_id, t.team_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    TEAM_ID TEAM_NAME                     
+---------- ---------- ---------- ---------- ------------------------------
+         1          1          1          1 TEAM A                        
+         1          2          2          2 TEAM B                        
+         1          3          3          1 TEAM A                        
+         1          4          4          1 TEAM A                        
+         1          5          5          2 TEAM B                        
+         1          6          6          2 TEAM B                        
+         1          7          7          2 TEAM B                        
+         2          1          8          1 TEAM A                        
+         2          2          9          1 TEAM A                        
+         2          3         10          2 TEAM B                        
+         1          8         15        105 New New New                   
+         1          9         11          1 TEAM A                        
+
+12 rows selected. 
+
+SQL> 
+SQL>  -- test valid registration with team (did not raise fund for any charity)
+SQL> DECLARE
+  2      output VARCHAR2(200);
+  3  BEGIN
+  4      prc_entry_registration(13, 'RM Spring Series Clayton 2024', '5 Km Run', 'Team A', NULL, output);
+  5      dbms_output.put_line(output);
+  6  END;
+  7  /
+Registration successful for competitor 13 in carnival RM Spring Series Clayton 2024 in event 5 Km Run in team Team A with entry no 11
+
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> -- after
+SQL> SELECT e.event_id, e.entry_no, e.comp_no, e.team_id, t.team_name
+  2  FROM entry e JOIN event ev ON e.event_id = ev.event_id JOIN carnival c ON ev.carn_date = c.carn_date JOIN team t ON e.team_id = t.team_id
+  3  WHERE UPPER(c.carn_name) = UPPER('RM Spring Series Clayton 2024');
+
+  EVENT_ID   ENTRY_NO    COMP_NO    TEAM_ID TEAM_NAME                     
+---------- ---------- ---------- ---------- ------------------------------
+         1          1          1          1 TEAM A                        
+         1          2          2          2 TEAM B                        
+         1          3          3          1 TEAM A                        
+         1          4          4          1 TEAM A                        
+         1          5          5          2 TEAM B                        
+         1          6          6          2 TEAM B                        
+         1          7          7          2 TEAM B                        
+         2          1          8          1 TEAM A                        
+         2          2          9          1 TEAM A                        
+         2          3         10          2 TEAM B                        
+         1          8         15        105 New New New                   
+         1          9         11          1 TEAM A                        
+         1         11         13          1 TEAM A                        
+
+13 rows selected. 
+
+SQL> 
+SQL> 
+SQL> 
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> 
+SQL> ------------- Task 6 MongoDB (a) --------------------------------------------
+SQL> @T6-rm-json.sql
+SQL> /*****PLEASE ENTER YOUR DETAILS BELOW*****/
+SQL> --T6-rm-json.sql
+SQL> 
+SQL> --Student ID: 33589739
+SQL> --Student Name: Hew Jia Jing
+SQL> 
+SQL> 
+SQL> /* Comments for your marker:
+SQL>
+SQL>Did not put all inside one array because data size exceeds the maximum bytes available for array.
+SQL>
+SQL>
+SQL>*/
+SQL> 
+SQL> 
+SQL> -- PLEASE PLACE REQUIRED SQL SELECT STATEMENT FOR THIS PART HERE
+SQL> -- ENSURE that your query is formatted and has a semicolon
+SQL> -- (;) at the end of this answer
+SQL> 
+SQL> 
+SQL> SELECT 
+  2      JSON_OBJECT(
+  3          '_id' VALUE t.team_id,
+  4          'carn_name' VALUE c.carn_name,
+  5          'carn_date' VALUE TO_CHAR(t.carn_date, 'DD-Mon-YYYY'),
+  6          'team_name' VALUE t.team_name,
+  7          'team_leader' VALUE JSON_OBJECT(
+  8              'name' VALUE (
+  9                  SELECT NVL(TRIM(c2.comp_fname) || ' ' || TRIM(c2.comp_lname), '-')
+ 10                  FROM entry e2 
+ 11                  JOIN competitor c2 ON e2.comp_no = c2.comp_no
+ 12                  WHERE e2.entry_no = t.entry_no AND e2.event_id = t.event_id
+ 13              ),
+ 14              'phone' VALUE (
+ 15                  SELECT c2.comp_phone
+ 16                  FROM entry e2 
+ 17                  JOIN competitor c2 ON e2.comp_no = c2.comp_no
+ 18                  WHERE e2.entry_no = t.entry_no AND e2.event_id = t.event_id
+ 19              ),
+ 20              'email' VALUE (
+ 21                  SELECT c2.comp_email
+ 22                  FROM entry e2 
+ 23                  JOIN competitor c2 ON e2.comp_no = c2.comp_no
+ 24                  WHERE e2.entry_no = t.entry_no AND e2.event_id = t.event_id
+ 25              )
+ 26          ),
+ 27          'team_no_of_members' VALUE COUNT(DISTINCT comp.comp_no),
+ 28          'team_members' VALUE JSON_ARRAYAGG(
+ 29              JSON_OBJECT(
+ 30                  'competitor_name' VALUE NVL(TRIM(comp.comp_fname) || ' ' || TRIM(comp.comp_lname), '-'),
+ 31                  'competitor_phone' VALUE comp.comp_phone,
+ 32                  'event_type' VALUE (
+ 33                      SELECT et2.eventtype_desc
+ 34                      FROM event ev2 
+ 35                      JOIN eventtype et2 ON ev2.eventtype_code = et2.eventtype_code
+ 36                      WHERE ev2.event_id = e.event_id
+ 37                  ),
+ 38                  'entry_no' VALUE e.entry_no,
+ 39                  'starttime' VALUE NVL(TO_CHAR(e.entry_starttime, 'HH24:MI:SS'), '-'),
+ 40                  'finishtime' VALUE NVL(TO_CHAR(e.entry_finishtime, 'HH24:MI:SS'), '-'),
+ 41                  'elapsedtime' VALUE NVL(TO_CHAR(e.entry_elapsedtime, 'HH24:MI:SS'), '-')
+ 42              )
+ 43          )
+ 44      FORMAT JSON
+ 45      ) AS team_json
+ 46  FROM team t
+ 47      JOIN entry e ON t.team_id = e.team_id
+ 48      JOIN competitor comp ON e.comp_no = comp.comp_no
+ 49      JOIN carnival c ON c.carn_date = t.carn_date
+ 50  GROUP BY
+ 51      t.team_id, 
+ 52      t.carn_date, 
+ 53      c.carn_name, 
+ 54      t.team_name, 
+ 55      t.entry_no, 
+ 56      t.event_id
+ 57  ORDER BY
+ 58      t.team_id;
+
+TEAM_JSON                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+{"_id":1,"carn_name":"RM Spring Series Clayton 2024","carn_date":"22-Sep-2024","team_name":"TEAM A","team_leader":{"name":"Jia Jing Hew","phone":"1234567890","email":"jiajing@gmail.com"},"team_no_of_members":5,"team_members":[{"competitor_name":"Jia Jing Hew","competitor_phone":"1234567890","event_type":"5 Km Run","entry_no":1,"starttime":"09:30:08","finishtime":"10:45:12","elapsedtime":"01:15:04"},{"competitor_name":"Max Chong","competitor_phone":"6234567894","event_type":"10 Km Run","entry_no":2,"starttime":"-","finishtime":"-","elapsedtime":"-"},{"competitor_name":"Queenie Teh","competitor_
+phone":"6234567893","event_type":"10 Km Run","entry_no":1,"starttime":"08:30:03","finishtime":"09:49:04","elapsedtime":"01:19:01"},{"competitor_name":"Xiao Qian Boon","competitor_phone":"4234567890","event_type":"5 Km Run","entry_no":4,"starttime":"09:30:01","finishtime":"10:49:03","elapsedtime":"01:19:02"},{"competitor_name":"Ming Er Chok","competitor_phone":"3234567890","event_type":"5 Km Run","entry_no":3,"starttime":"09:30:11","finishtime":"10:49:11","elapsedtime":"01:19:00"}]}
+
+{"_id":2,"carn_name":"RM Spring Series Clayton 2024","carn_date":"22-Sep-2024","team_name":"TEAM B","team_leader":{"name":"Yue Hua Chow","phone":"2234567890","email":"yuehua@gmail.com"},"team_no_of_members":5,"team_members":[{"competitor_name":"Yue Hua Chow","competitor_phone":"2234567890","event_type":"5 Km Run","entry_no":2,"starttime":"09:30:05","finishtime":"10:49:15","elapsedtime":"01:19:10"},{"competitor_name":"Brandon Lee","competitor_phone":"6234567895","event_type":"10 Km Run","entry_no":3,"starttime":"08:30:34","finishtime":"09:44:45","elapsedtime":"01:14:11"},{"competitor_name":"Jol
+in Cai","competitor_phone":"6234567892","event_type":"5 Km Run","entry_no":7,"starttime":"-","finishtime":"-","elapsedtime":"-"},{"competitor_name":"Celine Kang","competitor_phone":"6234567891","event_type":"5 Km Run","entry_no":6,"starttime":"-","finishtime":"-","elapsedtime":"-"},{"competitor_name":"Jia Ming Wah","competitor_phone":"5234567890","event_type":"5 Km Run","entry_no":5,"starttime":"09:30:02","finishtime":"10:49:02","elapsedtime":"01:19:00"}]}
+
+{"_id":3,"carn_name":"RM Autumn Series Clayton 2025","carn_date":"15-Mar-2025","team_name":"Hello","team_leader":{"name":"Queenie Teh","phone":"6234567893","email":"queenie@gmail.com"},"team_no_of_members":3,"team_members":[{"competitor_name":"Celine Kang","competitor_phone":"6234567891","event_type":"3 Km Community Run/Walk","entry_no":1,"starttime":"08:00:25","finishtime":"09:19:50","elapsedtime":"01:19:25"},{"competitor_name":"Queenie Teh","competitor_phone":"6234567893","event_type":"3 Km Community Run/Walk","entry_no":3,"starttime":"08:00:20","finishtime":"09:13:22","elapsedtime":"01:13:0
+2"},{"competitor_name":"Jolin Cai","competitor_phone":"6234567892","event_type":"3 Km Community Run/Walk","entry_no":2,"starttime":"08:00:10","finishtime":"09:19:42","elapsedtime":"01:19:32"}]}
+
+{"_id":4,"carn_name":"RM Spring Series Caulfield 2024","carn_date":"05-Oct-2024","team_name":"TEAM D","team_leader":{"name":"Yue Hua Chow","phone":"2234567890","email":"yuehua@gmail.com"},"team_no_of_members":3,"team_members":[{"competitor_name":"Yue Hua Chow","competitor_phone":"2234567890","event_type":"5 Km Run","entry_no":2,"starttime":"09:00:07","finishtime":"10:11:17","elapsedtime":"01:11:10"},{"competitor_name":"Queenie Teh","competitor_phone":"6234567893","event_type":"10 Km Run","entry_no":1,"starttime":"08:30:14","finishtime":"09:42:18","elapsedtime":"01:12:04"},{"competitor_name":"J
+ia Ming Wah","competitor_phone":"5234567890","event_type":"5 Km Run","entry_no":5,"starttime":"09:00:12","finishtime":"10:19:13","elapsedtime":"01:19:01"}]}
+
+{"_id":5,"carn_name":"RM Spring Series Caulfield 2024","carn_date":"05-Oct-2024","team_name":"Team A","team_leader":{"name":"Jia Jing Hew","phone":"1234567890","email":"jiajing@gmail.com"},"team_no_of_members":7,"team_members":[{"competitor_name":"Jia Jing Hew","competitor_phone":"1234567890","event_type":"5 Km Run","entry_no":1,"starttime":"09:00:05","finishtime":"10:19:06","elapsedtime":"01:19:01"},{"competitor_name":"Emily Tan","competitor_phone":"9234567893","event_type":"21.1 Km Half Marathon","entry_no":2,"starttime":"08:00:11","finishtime":"09:32:13","elapsedtime":"01:32:02"},{"competit
+or_name":"Marcus Chan","competitor_phone":"9234567892","event_type":"21.1 Km Half Marathon","entry_no":1,"starttime":"08:00:23","finishtime":"09:22:34","elapsedtime":"01:22:11"},{"competitor_name":"Brandon Lee","competitor_phone":"6234567895","event_type":"10 Km Run","entry_no":3,"starttime":"-","finishtime":"-","elapsedtime":"-"},{"competitor_name":"Max Chong","competitor_phone":"6234567894","event_type":"10 Km Run","entry_no":2,"starttime":"08:30:34","finishtime":"09:42:45","elapsedtime":"01:12:11"},{"competitor_name":"Xiao Qian Boon","competitor_phone":"4234567890","event_type":"5 Km Run","
+entry_no":4,"starttime":"09:00:23","finishtime":"10:11:34","elapsedtime":"01:11:11"},{"competitor_name":"Ming Er Chok","competitor_phone":"3234567890","event_type":"5 Km Run","entry_no":3,"starttime":"09:00:08","finishtime":"10:13:39","elapsedtime":"01:13:31"}]}
+
+{"_id":6,"carn_name":"RM Summer Series Caulfield 2025","carn_date":"02-Feb-2025","team_name":"We Can","team_leader":{"name":"Jia Jing Hew","phone":"1234567890","email":"jiajing@gmail.com"},"team_no_of_members":3,"team_members":[{"competitor_name":"Jia Jing Hew","competitor_phone":"1234567890","event_type":"3 Km Community Run/Walk","entry_no":1,"starttime":"08:30:10","finishtime":"09:41:19","elapsedtime":"01:41:09"},{"competitor_name":"Xiao Qian Boon","competitor_phone":"4234567890","event_type":"3 Km Community Run/Walk","entry_no":4,"starttime":"08:30:12","finishtime":"09:54:23","elapsedtime":
+"01:24:11"},{"competitor_name":"Ming Er Chok","competitor_phone":"3234567890","event_type":"3 Km Community Run/Walk","entry_no":3,"starttime":"08:30:22","finishtime":"09:34:44","elapsedtime":"01:04:22"}]}
+
+{"_id":7,"carn_name":"RM Summer Series Caulfield 2025","carn_date":"02-Feb-2025","team_name":"We Believe","team_leader":{"name":"Yue Hua Chow","phone":"2234567890","email":"yuehua@gmail.com"},"team_no_of_members":4,"team_members":[{"competitor_name":"Yue Hua Chow","competitor_phone":"2234567890","event_type":"3 Km Community Run/Walk","entry_no":2,"starttime":"08:30:23","finishtime":"09:44:45","elapsedtime":"01:44:22"},{"competitor_name":"Sophia Ng","competitor_phone":"9234567891","event_type":"5 Km Run","entry_no":2,"starttime":"08:30:37","finishtime":"09:34:38","elapsedtime":"01:14:01"},{"com
+petitor_name":"Brandon Lee","competitor_phone":"6234567895","event_type":"5 Km Run","entry_no":1,"starttime":"08:30:34","finishtime":"09:40:45","elapsedtime":"01:10:11"},{"competitor_name":"Jia Ming Wah","competitor_phone":"5234567890","event_type":"3 Km Community Run/Walk","entry_no":5,"starttime":"08:30:45","finishtime":"09:41:55","elapsedtime":"01:11:10"}]}
+
+
+7 rows selected. 
+
+SQL> 
+SQL> --============================== END RUN ======================================---
+SQL> set echo off
